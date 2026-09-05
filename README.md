@@ -171,7 +171,7 @@ PV 是游戏里的场景加了雨,雨只下在窗户外面。
 
 - **封包格式 HyPack v3**:文件头 `HyPack\0\3`;`u32@8` = 索引相对 `0x10` 的偏移;`u32@12` = 条目数;每条 48 字节:`name[0x15]`、`ext[3]@0x15`、`u32 offset@0x18`(再 +0x10)、`u32 unpacked@0x1c`、`u32 packed@0x20`、`u8 comp@0x24`(0 = 直存,2 = Cocotte 压缩)。
 - **VOICE/SREV*.PAK**(165 个包,编号 001–190 有洞,按通配枚举):全部直存,条目是 RIFF WAV,**MS-ADPCM 单声道**(约 22 KB/s ⇒ 4-bit);采样率**逐条读**,8,603 条里 44.1 kHz 8,096 条、48 kHz 507 条,不能假定全 44.1k。`tools/extract_voice.py` 逐条解出并记 `dataset/stats.csv`(pak, entry, sample_rate, bytes, seconds)。时长优先读 `fact` 块的样本数,没有就用 `data 长度 / block_align × samplesPerBlock`。
-- **其他包**(后来为找歌曲才查清):`SONG/SRxx/SONG.ADP` = 整曲(见 §4.9);`KEY.PAK` = fortell 乐器采样(bdbd/guit/wind…,ADP1 单声道短样本);`SONG.PAK` = 背景图 + 曲名图;`BGM/TRACK*.BGM` = 标准 RIFF WAVE PCM 纯配乐;`EVCG.PAK` 236 条全部直存,其中 211 张 PNG:`srchr*` 立绘(320×480 / 340×480,RGBA)、`srfea*` 翅膀小图、`srey*` 眼部差分;朵朵(トルティニタ)的立绘是**红裙白衬衫扎发**那组:srchr010–019、122、139–143、149–151;戴帽子长双马尾、带音符的 srchr090–097、127–130、147 是芙铃(フォーニ),第一版 PV Agent认错了人,作者纠正;`EVBG.PAK` 140 张 PNG:`srbg*` 640×480 背景、`sran*` 640×1920/3840 竖排动画条;`EVSE.PAK` 60 条 RIFF WAV 音效;`SROP.MPG` 开场动画 640×480 60fps 189 s。全部用 `tools/extract_images.py` 按索引直接切出,不需要解码。
+- **其他包**(后来为找歌曲才查清):`SONG/SRxx/SONG.ADP` = 整曲(见 §4.9);`KEY.PAK` = fortell 乐器采样(bdbd/guit/wind…,ADP1 单声道短样本);`SONG.PAK` = 背景图 + 曲名图;`BGM/TRACK*.BGM` = 标准 RIFF WAVE PCM 纯配乐;`EVCG.PAK` 236 条全部直存,其中 211 张 PNG:`srchr*` 立绘(320×480 / 340×480,RGBA)、`srfea*` 翅膀小图、`srey*` 眼部差分;朵朵(トルティニタ)的立绘是**红裙白衬衫扎发**那组:srchr010–019、122、139–143、149–151;戴帽子长双马尾、带音符的 srchr090–097、127–130、147 是芙铃(フォーニ),第一版 PV 我(Claude Code)认错了人,作者纠正;`EVBG.PAK` 140 张 PNG:`srbg*` 640×480 背景、`sran*` 640×1920/3840 竖排动画条;`EVSE.PAK` 60 条 RIFF WAV 音效;`SROP.MPG` 开场动画 640×480 60fps 189 s。全部用 `tools/extract_images.py` 按索引直接切出,不需要解码。
 - 核对:每包条目数与文件尾对得上、随机抽几条 WAV 能播。
 
 ### 4.3 说话人映射与语料构建
@@ -318,7 +318,7 @@ ffmpeg -y -ss 43 -i "<游戏目录>/SROP.MPG" -frames:v 1 -vf "crop=640:360:0:60
 8. **`amix duration=shortest` 把歌尾砍了**:一条短轨决定总长 → 短轨 `apad`,或先把短层预混进长轨。
 9. **和声层放早了 6.594 s / 拼接处 50 ms 重复 / 补丁窗太短切掉 memory 尾音**:视频轴与官方轴混用;切点算重叠 → 所有切点写成「源轴」并在脚本头注明;拼前 `ffprobe` 总时长核对。
 10. **多声部 F0 抖动 160–180 音分**:两条基频叠着 → 本次五组参数扫描都没解决,最终换输入(flying-in)才过。
-11. **「无词哼鸣」叙事被作者戳穿**:Agent 把听不清的段描述成「哼鸣」,实际是碾碎的词 → **不要编听感**;报能量、F0、时长这些数,听感留给作者。
+11. **「无词哼鸣」叙事被作者戳穿**:我(Claude Code)把听不清的段描述成「哼鸣」,实际是碾碎的词 → **不要编听感**;报能量、F0、时长这些数,听感留给作者。
 12. **SONG.ADP 当 PCM 解成噪声,还据此说「游戏里只有伴奏」**:格式猜错;bpm 估计器对噪声也给数 → 谱平坦度判据(0.10 vs 0.00003);找规格文件(GARbro)再动手。
 13. **BGM/TRACK14 被当成《秘密》**:69.8 bpm 正好等于谱面站的 70,但它是纯配乐(人声轨 −85 dBFS)→ bpm 相同不等于同曲;人声轨 dBFS 才是「有没有唱」的判据。
 14. **rubberband 移人声全曲空灵**(B2 版)→ 机制未核(通常归于相位声码器类算法的相位/瞬态处理)→ 工艺结论:人声只走 RVC `--pitch`,伴奏才用 rubberband。
@@ -330,7 +330,7 @@ ffmpeg -y -ss 43 -i "<游戏目录>/SROP.MPG" -frames:v 1 -vf "crop=640:360:0:60
 
 ---
 
-## 6. Agent 自己想加的
+## 6. 我(Claude Code)想加的
 
 **验证纪律:每一步用什么数字核,不靠耳朵断因果。**
 - 「有没有内容」:轨的 RMS dBFS(本项目这批音轨、这套分离模型下的经验判据:−20 真声、−45 以下残留、−85 空;换模型或归一化方式要重标)。
