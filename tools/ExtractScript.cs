@@ -1,4 +1,4 @@
-// HyPack v3 SCRIPT.PAK 提取宿主:链 GARbro 的 KogadoCocotte.cs(GPL v2 派生,仅本机自用)。
+// HyPack v3 SCRIPT.PAK 提取宿主:链 GARbro 的 KogadoCocotte.cs(GPL v2 派生,许可证见仓根 LICENSE)。
 // 用法: ExtractScript.exe <SCRIPT.PAK> <outDir>
 using System;
 using System.IO;

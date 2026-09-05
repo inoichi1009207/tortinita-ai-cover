@@ -213,7 +213,7 @@ PV 是游戏里的场景加了雨,雨只下在窗户外面。
     --pitch 0 --index-rate 0.6 --protect 0.35 --f0-method rmvpe )
 ```
 
-权威入口是 `bash tools/build_pitch_version.sh <标签> <半音>`,它内部就是这条命令。三份 shell 工具(`build_pitch_version.sh` / `fly_235.sh` / `window_variants.sh`)都按脚本自身位置推导根目录(`ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"`,给 Windows 程序的路径用 `cygpath -m` 转盘符形式),不再写死本机目录;`fly_235.sh` 开头检查两份输入存在,缺了直接报错退出(外审 150-02/07/08)。
+权威入口是 `bash tools/build_pitch_version.sh <标签> <半音>`,它内部就是这条命令。四份 shell 工具(`build_pitch_version.sh` / `fly_235.sh` / `window_variants.sh`)都按脚本自身位置推导根目录(`ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"`,给 Windows 程序的路径用 `cygpath -m` 转盘符形式),不再写死本机目录;`fly_235.sh` 开头检查两份输入存在,缺了直接报错退出(外审 150-02/07/08)。
 
 整曲(3:38)在本机 GPU 上 12–42 s 一次。变体:`--pitch -2`(B 版)、`--formant-shifting --formant-qfrency 1.0 --formant-timbre 0.88`(A 版,只改音色不改音高)。
 
@@ -342,8 +342,6 @@ ffmpeg -y -ss 43 -i "<游戏目录>/SROP.MPG" -frames:v 1 -vf "crop=640:360:0:60
 **版本命名与台账。** v1–v23 每版一句改动、一句耳裁结果;A/B/C 音高版、B2/B3 对照版、P1–P5 参数扫描、FLY/HARM/FLYHARM 修法版,名字里带做法而不是日期。同一个窗口的切点常数(6.594、84.66、65.5–67.7、154.0–160.6)写进脚本里(`fly_235.sh` 在头注,`build_pitch_version.sh` 只埋在命令体——外审指出这点不一致,以后统一放头注/变量区),不散在聊天里。
 
 **什么时候该停下问。** 只有三类:不可逆(发布、删除)、要作者亲签的取舍(音区选哪版、这段要不要牺牲和声)、只有作者能做的事(耳裁、登录)。「工作量大」不是理由——重建一个版本往往就是一条脚本一分钟。
-
-**法律与标识。** 素材来源:官方音频、官方伴奏、作者合法持有的游戏本体;不分发语料/模型检查点/游戏资源。成品发布标「AI 翻唱 · 非官方」,注明声库来源与原唱。各平台对 AI 生成内容的标识与翻唱授权规则**本次未取页核实**,发布前作者自己看一遍当时的规则页。
 
 ---
 
