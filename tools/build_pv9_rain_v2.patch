@@ -1,0 +1,51 @@
+--- tools/build_pv8.py
++++ tools/build_pv9_rain_v2.py
+@@ -1,3 +1,5 @@
+-"""PV v8:按用户分配表切镜(同 v7),**不缩放**;雨效 = 程序合成的斜向雨丝层(pv/assets/rain/streak_1..4.png,8 fps 循环;游戏动画条差分抽出的那层大头是地面涟漪,用户否掉):
+-封面与 sran 之外的静态外景全幅叠,静态室内只叠在窗外天空掩膜内(游戏本体室内也只在窗外见雨);sran 条本身带雨帧,原样播放。
+-镜头间 0.8s 叠化;歌词层同 v3。用法:venv/Scripts/python.exe tools/build_pv8.py [音频] [输出]"""
++"""PV v9 rain-v2 candidate: traced pane masks + eight advected rain phases.
++Run: venv/Scripts/python.exe tools/build_pv9_rain_v2.py [audio] [output]
++Default path rebuilds A+B through rain_v2.build_assets (usage counter in metrics).
++Retire/retrace when backgrounds or fixed framing change. v8 lyrics/cuts retained.
++"""
+@@ -5 +7,2 @@
+-from PIL import Image, ImageDraw, ImageFont, ImageFilter
++from PIL import Image, ImageDraw, ImageFont
++from rain_v2 import build_assets, rain_at, PANES
+@@ -8 +11 @@
+-OUT = sys.argv[2] if len(sys.argv) > 2 else 'pv/pv_v8_rain.mp4'
++OUT = sys.argv[2] if len(sys.argv) > 2 else 'pv/pv_v9_rain_v2.mp4'
+@@ -14,9 +17,3 @@
+-RAIN = [np.asarray(Image.open(f'pv/assets/rain/streak_{k}.png').convert('RGBA').resize((W, H), Image.BILINEAR), dtype=np.float32)[..., 3] / 255 * RAIN_ALPHA for k in (1, 2, 3, 4)]
+-# 每张室内:窗框矩形 + 排除矩形(天花板/墙角漏雨处)+ 玻璃色判据(白天=浅灰天空;夜晚=深灰玻璃;窗棂浅色自然排除)。
+-# 用户 2026-09-04 目检:0:50 走廊天花板漏雨、1:04 卧室窗棂上有雨丝且玻璃有空洞 —— 由此改为 day/night 双判据 + 排除框。
+-SPEC = {
+-    'srbg054': {'rects': [(0, 0, 660, 880), (880, 140, 1450, 880)], 'excl': [(880, 140, 1010, 210)], 'mode': 'day'},
+-    'srbg026': {'rects': [(0, 0, 420, 810), (440, 150, 905, 810), (905, 470, 1155, 790)], 'excl': [(830, 140, 905, 290)], 'mode': 'day'},
+-    'srbg296': {'rects': [(250, 110, 1240, 700)], 'excl': [], 'mode': 'night'},
+-    'srbg266': {'rects': [(0, 100, 300, 620)], 'excl': [], 'mode': 'night'},
+-}
++build_assets()
++RAIN = [np.asarray(Image.open(f'pv/assets/rain/streak8_{k}.png').convert('RGBA'), dtype=np.float32)[..., 3] / 255 * RAIN_ALPHA for k in range(1, 9)]
++
+@@ -24,8 +21,4 @@
+-    sp = SPEC.get(name, {'rects': [(0, 0, W, H)], 'excl': [], 'mode': 'day'})
+-    hsv = np.asarray(bg.convert('HSV'), dtype=np.float32); s = hsv[..., 1] / 255; v = hsv[..., 2] / 255
+-    glass = ((s < 0.16) & (v > 0.25) & (v < 0.9)) if sp['mode'] == 'day' else ((s < 0.25) & (v < 0.5))
+-    rm = np.zeros((H, W), dtype=bool)
+-    for x0, y0, x1, y1 in sp['rects']: rm[y0:y1, x0:x1] = True
+-    for x0, y0, x1, y1 in sp['excl']: rm[y0:y1, x0:x1] = False
+-    m = Image.fromarray(((glass & rm).astype(np.uint8) * 255)).filter(ImageFilter.MinFilter(3)).filter(ImageFilter.MaxFilter(5)).filter(ImageFilter.GaussianBlur(1.5))
+-    return np.asarray(m, dtype=np.float32) / 255
++    with Image.open(f'pv/assets/masks/{name}.png') as mask:
++        if mask.mode != 'L' or mask.size != (W, H):
++            raise ValueError(f'{name}: expected a 1920x1080 L mask')
++        return np.asarray(mask, dtype=np.float32) / 255
+@@ -42 +35,2 @@
+-        SHOT[name] = {'frames': [np.asarray(bg, dtype=np.float32)], 'rain': 'mask', 'mask': sky_mask(bg, name)}
++        SHOT[name] = {'frames': [np.asarray(bg, dtype=np.float32)], 'rain': 'mask' if name in PANES else 'full'}
++        if name in PANES: SHOT[name]['mask'] = sky_mask(bg, name)
+@@ -46 +40 @@
+-    a = RAIN[k % 4]
++    a = rain_at(RAIN, t)

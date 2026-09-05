@@ -1,0 +1,33 @@
+# 本仓只放脚本与文字。以下一律不入仓:游戏文件、音频、模型、数据集、虚拟环境、渲染产物
+*.wav
+*.mp3
+*.m4a
+*.flac
+*.mp4
+*.png
+*.jpg
+*.pth
+*.index
+*.exe
+*.npy
+*.lrc
+*.log
+__pycache__/
+venv*/
+dataset/
+applio/
+stems*/
+songs*/
+pv/assets/
+enx_jsons/
+# 文本形态的版权物与游戏脚本转储(外审 r1 补)
+pv/lyrics*
+*lyric*.json
+*lyrics*.txt
+*.html
+whisper_words*.json
+tools/enx_scr*.json
+*.raw
+adp_probe*
+model-repo/
+.claude/
