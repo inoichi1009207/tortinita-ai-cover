@@ -36,7 +36,7 @@ RVC、多声部分离、局部音频修补、混音和 PV。这个仓库就是�
 朵鲁妲唱了《相别 Goodbye》,整首比原唱低两个半音。
 
 她的声音是从游戏里 1,739 句对白训出来的。歌是官方版本:人声换成了她的声音,伴奏还是官方的。
-原唱有两处自己退到和声后面,朵朵接不住,就从同一首歌的另一段副歌把同样的词「飞」过来补上。
+原唱有两处主唱与和声关系比较复杂,直接做 RVC 会出问题,所以从另一段副歌移植了可用的同词片段,再单独处理和声。
 PV 是游戏里的场景加了雨,雨只下在窗户外面。
 
 细节、参数和几十个失败版本,都在下面的教程里。
@@ -79,9 +79,9 @@ PV 是游戏里的场景加了雨,雨只下在窗户外面。
 用《交响乐之雨》里朵鲁妲(トルティニタ,CV 中原麻衣)的 **1,739 句对白(138 分钟)** 训了一个 RVC 声库(Applio,130 轮),
 把《重返未来:1999》的《相别 Goodbye》官方主唱干声转成她的声音,最终成品 = **全曲降 2 半音**(人声 RVC 重转 + 官方伴奏 rubberband 移调)
 + **两处 flying-in 移植**(1:01–1:07 与 2:34–2:41,同曲另一副歌的同词段飞入)+ **两处官方和声复活窗**(主唱 −1.5 dB / 伴奏 +2 dB)。
-定稿文件(2026-09-04 起):`goodbye_torta_final_v3.mp3` = v4a 混音链(伴奏 250 Hz −2 dB + 主唱触发的 2:1 侧链让位,整体对齐 −12 LUFS)+ 2:34 飞入 + **1:07 "Memories of time" 再飞入**(`tools/fly_107.sh`:第二副歌 150.13–153.88 → 65.45–69.20,偏移 84.68 s 由两窗包络互相关测得,入/出点都放在 weave|Me、time|Stitching 之间的能量低谷;第一刀切在 65.7 s,落在 Me 起音 65.6 s 之后,出了 "Mememory"——飞入的刀口必须量起音、不能按歌词表时间估)+ 去掉 memory 窗的旧自动化。旧定稿 v2 = `goodbye_torta_fullB_FLYHARM235.mp3` 加标签,已被替代。
+中间版 v3(2026-09-04 下午,已被下面的最终版取代):`goodbye_torta_final_v3.mp3` = v4a 混音链(伴奏 250 Hz −2 dB + 主唱触发的 2:1 侧链让位,整体对齐 −12 LUFS)+ 2:34 飞入 + **1:07 "Memories of time" 再飞入**(`tools/fly_107.sh`:第二副歌 150.13–153.88 → 65.45–69.20,偏移 84.68 s 由两窗包络互相关测得,入/出点都放在 weave|Me、time|Stitching 之间的能量低谷;第一刀切在 65.7 s,落在 Me 起音 65.6 s 之后,出了 "Mememory"——飞入的刀口必须量起音、不能按歌词表时间估)+ 去掉 memory 窗的旧自动化。旧定稿 v2 = `goodbye_torta_fullB_FLYHARM235.mp3` 加标签,已被替代。
 **v3b(2026-09-04)修正一个 v3 的硬伤**:2:34 的飞入窗原来是 154.0–160.6 s,把第一副歌的 "Stitching / I am yours, you are mine" 整段盖到了第二副歌的 "Stitching / You and I'll be alright" 上——两个副歌**歌词不同**,作者听出唱错词。现在只飞 Stitching(154.0–157.2 ← 69.32–72.52,刀口在 157.2 s 的能量低谷),"You and I'll be alright" 保留原第二副歌主唱,并把和声复活窗移到它身上(157.3–162.0)。核对用互相关:157.3–162.0 新主唱与原第二副歌 1.000、与第一副歌对应段 −0.100。**教训:飞入前先逐句比两段歌词,同旋律不等于同词。** 已固化为 `tools/lyric_window_check.py`:两份 fly 脚本在剪接前用**同一组**成品轴窗口变量调用它,任一窗没命中歌词行或逐行文本不同即退出 2(codex r4 外审后加固:空窗不放行、参数校验、纯 ASCII 输出免得 GBK 控制台把合法窗误拦)。
-**最终定稿(2026-09-04 晚)= `goodbye_torta_final_20260904b.mp3`**:在 v3b 之上只把 2:26.5–2:40.5 的官方和声压 −6 dB(用 karaoke 模型把官方伴奏拆成和声轨与纯伴奏,`tools/harmony_mix.py` 窗口模式),窗口外逐样本不变;1:0x 段按作者裁定不压。
+**最终版(2026-09-04 晚,B 站投稿用的就是它)= `goodbye_torta_final_20260904b.mp3`**:`goodbye_torta_final_20260904.mp3`(= v3b 同流,音频与 `goodbye_torta_final_v4a_FLY107_NOHARM.mp3` 逐位相同)之上只把 2:26.5–2:40.5 的官方和声压 −6 dB(用 karaoke 模型把官方伴奏拆成和声轨与纯伴奏,`tools/harmony_mix.py` 窗口模式),窗口外逐样本不变;1:0x 段按作者裁定不压。
 
 ---
 
@@ -221,7 +221,7 @@ PV 是游戏里的场景加了雨,雨只下在窗户外面。
 
 ### 4.7 对齐与混音配方
 
-定稿分**两层**:下面这条是 **v23 基线混音**(只含 memory 窗自动化),`build_pitch_version.sh` 产的 B 版就是它;定稿还要再跑 `tools/fly_235.sh` 叠第二处飞入 + 154.0–160.6 s 和声窗(§4.10)。基线配方:
+混音分**两层**:下面这条是 **v23 基线混音**(只含 memory 窗自动化),`build_pitch_version.sh` 产的 B 版就是它;最终版在它之上还要跑 `tools/fly_235.sh`(2:34 飞入)、`tools/fly_107.sh`(1:07 飞入 + v4a 链)与 `tools/harmony_mix.py`(和声窗 −6 dB),顺序见 §7.2。基线配方:
 
 ```
 ffmpeg -i <主唱> -i <伴奏> -filter_complex "
@@ -285,7 +285,7 @@ ffmpeg -i <主唱> -i <伴奏> -filter_complex "
 **成功的路**:
 1. **flying-in 移植**:同一首歌两个副歌是同词同旋律(两窗主唱色度相关 0.81),把健康那次的主唱切下来飞到病灶位置。第一次(v20):视频轴 68.66–71.60 ← 153.32–156.26(第二副歌飞到第一副歌);第二次(fly235):成品 154.0–160.6 ← 69.34–75.94(第一副歌飞到第二副歌),源轴各加 6.594。拼接两端 60–80 ms 交叉淡入淡出。
 2. **官方和声复活**:该窗主唱 ×0.841、伴奏 ×1.259(4.7 的自动化),让官方伴奏里的和声接住。
-3. 两者叠加(`goodbye_torta_fullB_FLYHARM235.mp3`)为定稿。
+3. 两者叠加(`goodbye_torta_fullB_FLYHARM235.mp3`)是**当时**的定稿(中间版 v2);之后 2:34 窗缩到只飞 Stitching、1:07 再飞一次、和声窗改为压低 −6 dB,最终版见 §0 与 §7.2。
 
 核对:飞入后该窗主唱轨比原来高 2–4 dB(2:35 处 −18.1 对 −21.9);接缝处 `ffprobe` 总时长不变(218.86 s)。
 
@@ -353,14 +353,17 @@ ffmpeg -y -ss 43 -i "<游戏目录>/SROP.MPG" -frames:v 1 -vf "crop=640:360:0:60
 
 | 路径 | 内容 |
 |---|---|
-| `goodbye_torta_final_v2.mp3` | 定稿(B 降 2 + 两处飞入 + 两处和声复活;带 ID3) |
-| `goodbye_torta_final.mp3` | 旧定稿 v23(原调) |
+| `goodbye_torta_final_20260904b.mp3` | **最终版**(投稿件;音频 MD5 `c8cc19283ea1bd08fce25299aa8601b2`,−12.2 LUFS) |
+| `goodbye_torta_final_20260904.mp3` | 最终版的前一步(= v3b;窗口外与最终版一致) |
+| `goodbye_torta_final_v2.mp3` / `_v3.mp3` / `_v3b.mp3` | 中间版(v2 = FLYHARM235 加标签;v3/v3b 见 §0) |
+| `goodbye_torta_final.mp3` | 旧版 v23(原调) |
 | `goodbye_torta_fullA_formant.mp3` / `fullB_down2.mp3` / `fullC_down4.mp3` | 音高三版 |
 | `goodbye_torta_fullB2_v23lead_shift.mp3` / `fullB3_rvclead_instrb2.mp3` | 归因对照版 |
 | `goodbye_torta_fullB_FLY235.mp3` / `HARM235.mp3` / `FLYHARM235.mp3` | 2:34–2:41 三种修法 |
 | `clips/` | 各版 2:30–2:45 片段 |
-| `torta_lead_full.wav`、`torta_lead_v20.wav`、`leadA_*`、`leadB_*`、`leadB_fly235.wav` | 各版人声轨 |
+| `torta_lead_full.wav`、`torta_lead_v20.wav`、`leadA_*`、`leadB_*`、`leadB_fly235.wav`、`leadB_fly235_107.wav` | 各版人声轨(最后一个是最终版用的) |
 | `inst_full_down2.wav`、`inst_full_down2_rb2.wav` | 伴奏 −2(默认档 / 高质量档) |
+| `stems-inst/` | 官方伴奏(−2)经 karaoke 模型拆成的和声轨 / 纯伴奏(最终版压和声用) |
 | `official/goodbye_instrumental_official.mp3` | 官方伴奏 |
 | `stems-lead/` | 两级分离产物(主唱 / 和声) |
 | `songs/`、`songs-stems/` | 游戏 18 首整曲(正确解码)与分离产物;`songs-wrong-pcm-decode/` 是错误解码留档 |
@@ -370,26 +373,28 @@ ffmpeg -y -ss 43 -i "<游戏目录>/SROP.MPG" -frames:v 1 -vf "crop=640:360:0:60
 | `tools/` | 本文所有脚本与移植源码 |
 | `venv/`、`venv-train/`、`venv-applio/` | 三个虚拟环境 |
 
-### 7.2 定稿复跑命令(从 B 版人声与伴奏出发)
+### 7.2 最终版复跑命令(从 B 版人声与伴奏出发)
 
-两种入口不要混:**从主唱干声复建**(下面 1→2→3)或**从现成中间件复跑**(直接 2→3,前提是目录里已有 `leadB_spliced.wav` 与 `inst_full_down2.wav`)。都在 `clipboard/ai-cover/` 下执行。
+目标产物是 `goodbye_torta_final_20260904b.mp3`。两种入口不要混:**从主唱干声复建**(1→2→3→4→5)或**从现成中间件复跑**(直接 2→5,前提是目录里已有 `leadB_spliced.wav` 与 `inst_full_down2.wav`)。都在 `clipboard/ai-cover/` 下跑。
 
 ```
 # 1. B 版整曲(RVC --pitch -2、伴奏 rubberband、v20 移植、v23 基线配方);产物 leadB_spliced.wav / inst_full_B.wav
 bash tools/build_pitch_version.sh B -2
-cp inst_full_B.wav inst_full_down2.wav      # fly_235.sh 固定读 inst_full_down2.wav(历史命名,外审 150-02)
-# 2. 2:34–2:41 修法三版(读 leadB_spliced.wav + inst_full_down2.wav;脚本不检查输入是否存在)
+cp inst_full_B.wav inst_full_down2.wav      # 后面的脚本固定读 inst_full_down2.wav(历史命名)
+# 2. 2:34 窗只飞 Stitching(154.0–157.2 ← 69.32–72.52);产物 leadB_fly235.wav(顺带出三个中间版 mp3,不用管)
 bash tools/fly_235.sh
-# 3. 定稿 = FLYHARM 加标签
-ffmpeg -i goodbye_torta_fullB_FLYHARM235.mp3 -c copy \
-  -metadata title="相别 Goodbye(AI 翻唱·非官方)" \
-  -metadata artist="朵鲁妲 AI 声库(トルティニタ / 交响乐之雨)· 原唱 The 1999" \
-  goodbye_torta_final_v2.mp3
-# 核对(两条输出的 MD5 必须相同;时长 218.86 s)
-ffmpeg -v error -i goodbye_torta_fullB_FLYHARM235.mp3 -map 0:a:0 -f md5 -
-ffmpeg -v error -i goodbye_torta_final_v2.mp3        -map 0:a:0 -f md5 -
-ffprobe -v error -show_entries format=duration -of csv=p=0 goodbye_torta_final_v2.mp3
+# 3. 1:07 memory 再飞一次(65.45–69.2 ← 150.13–153.88)+ v4a 混音链;产物 leadB_fly235_107.wav 与
+#    goodbye_torta_final_v4a_FLY107_NOHARM.mp3(= goodbye_torta_final_20260904.mp3,最终版的前一步)
+bash tools/fly_107.sh
+# 4. 把 −2 半音的官方伴奏拆成 和声轨 / 纯伴奏(audio-separator,karaoke 模型;venv-train)
+audio-separator inst_full_down2.wav --model_filename mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt --output_dir stems-inst --output_format WAV
+# 5. 最终版:只在 146.5–160.5 s(成品轴)把和声轨压 −6 dB,重走 v4a 链(主唱 +4 dB),对齐 −12 LUFS
+LEAD_DB=4 venv/Scripts/python.exe tools/harmony_mix.py -6 20260904b 146.5-160.5
+# 核对:窗口外与第 3 步产物 5 秒 RMS 差 0.0 dB、窗口内低 0.3–0.5 dB;时长 218.86 s
+ffprobe -v error -show_entries format=duration -of csv=p=0 goodbye_torta_final_20260904b.mp3
 ```
+
+**复跑不保证逐位一致。** 2026-09-05 用上面第 5 步原样重跑,得到的文件比投稿件整体响 0.7 dB(窗口内外一致地偏移),和声窗的相对压低量一样;整体电平来自 `harmony_mix.py` 末尾按 ebur128 实测做的 −12 LUFS 对齐,两次实测差了零点几 dB 的原因没有查清,如实记在这里。要确认手上的是投稿件,认 §7.1 里的 MD5,不认复跑。
 
 ### 7.3 关键常数
 
@@ -398,7 +403,9 @@ ffprobe -v error -show_entries format=duration -of csv=p=0 goodbye_torta_final_v
 | 视频轴 − 官方轴 | 6.594 s | 互相关 |
 | 第二副歌 − 第一副歌 | 84.66 s | 互相关 + v20 移植验证 |
 | memory 窗 | 65.5–67.7 s(斜坡 0.15 s) | 耳裁 |
-| 2:34 窗 | 154.0–160.6 s(飞入源 69.34–75.94) | 逐秒 RMS + 色度相关 0.81 |
+| 2:34 窗(最终版) | 154.0–157.2 s(飞入源 69.32–72.52,只飞 Stitching) | 逐秒 RMS + 逐句比词;首版 154.0–160.6 盖错了词 |
+| 1:07 窗(最终版) | 65.45–69.2 s(飞入源 150.13–153.88) | 包络互相关 + 起音低谷 |
+| 和声压低窗(最终版) | 146.5–160.5 s,和声轨 −6 dB(0.3 s 平滑) | 耳裁 |
 | 降 2 半音 | rubberband pitch = 0.890899 | 2^(−2/12) |
 | 混音 | 主唱 +4 dB、伴奏 −2 dB、normalize=0、limiter 0.98 | 耳裁 |
 | 推理 | index 0.6、protect 0.35、rmvpe | 默认 + 扫描无差 |
