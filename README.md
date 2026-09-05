@@ -41,8 +41,7 @@ PV 是游戏里的场景加了雨,雨只下在窗户外面。
 
 ## 这里没有什么
 
-- **游戏文件**:封包、背景图、语音、OP 视频一概不在仓里。脚本里出现的文件名(`SROP.MPG`、`srbg054.png`、`SONG.ADP`……)
-  原样保留——知道文件名但没有文件也无济于事,复现要用你自己的游戏副本。
+- **游戏文件**:封包、背景图、语音、OP 视频都不在仓里。脚本里的文件名(`SROP.MPG`、`srbg054.png`……)照原样保留,复现请用自己的游戏副本。
 - **训练出来的声库**:语料来自商业游戏的配音,声库本身只在本地使用,不随本仓发布;教程给的是完整的复现路径。
 - **音频成品、数据集、分离出来的音轨、渲染出来的视频、歌词文本文件、虚拟环境**:见 `.gitignore`。
 
@@ -56,9 +55,9 @@ PV 是游戏里的场景加了雨,雨只下在窗户外面。
   写死着作者本机路径(`D:\test\clipboard\ai-cover`、游戏目录、`D:/hf-home`),改顶部那几行常量即可。
   - `GARbro_AudioADP.cs` 摘自 [GARbro](https://github.com/morkt/GARbro)(MIT,morkt),`Adp1Decode.cs` 是据它写的独立命令行移植。
     `KogadoCocotte.cs` 同样取自 GARbro,但它是 juicy.gt 的 **GPL v2** 代码的 C# 移植(内含 Michael Schindler 的 range coder),
-    `ExtractScript.cs` 依赖它,同属 GPL v2 派生件。**本仓尚未选定整体许可证**——选的时候要把这两份 GPL 派生件算进去。
-    编译产物 `.exe` 不入仓。
-  - `kgo_commands.py` / `kgo_assembler.py` 来自 SymphonicRain-ENX 项目的脚本工具(本项目只把它们当只读参考;其许可证未核实)。
+    `ExtractScript.cs` 依赖它,同属 GPL v2 派生件。编译产物 `.exe` 不入仓。
+  - `kgo_commands.py` / `kgo_assembler.py` 来自 [SymphonicRain-ENX](https://github.com/masagrator/SymphonicRain-ENX)(本项目只把它们当只读参考;上游未声明许可证)。
+  - 本仓采用 MIT;上面这几份第三方文件不在 MIT 之内,各自的条款见 `LICENSE` 末尾的例外条款。
   - `rain_v2.py`、`build_pv9_rain_v2.py`、`build_pv9_rain_v2.patch` 是让 codex(gpt-6-astra)试做雨效时的产物,
     留档对照,**最终 PV 没有采用**(它手标的掩膜比游戏背景自带的 alpha 通道保守得多,见教程 4.11)。
 - `README.md` —— 本文,下面从「全流程教程」起是完整教程(经 codex 四轮只读外审;审计记录不入仓)。

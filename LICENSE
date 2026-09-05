@@ -1,0 +1,51 @@
+MIT License
+
+Copyright (c) 2026 inoichi1009207
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+----------------------------------------------------------------------
+Exceptions / 例外条款
+----------------------------------------------------------------------
+
+The MIT license above covers only the files whose copyright belongs to the
+author of this repository. The following files are third-party works kept
+here as separate, independent tools (a "mere aggregate" in GPL terms); they
+are NOT covered by the MIT license and keep their own terms:
+
+1. tools/KogadoCocotte.cs
+   From GARbro (https://github.com/morkt/GARbro), C# port by morkt of code
+   written by juicy.gt; includes the range coder by Michael Schindler.
+   Licensed under the GNU General Public License, version 2 (see the file
+   header). GPL-2.0-only.
+
+2. tools/ExtractScript.cs
+   A small command-line host written for this project that links against
+   tools/KogadoCocotte.cs. As a derivative of a GPL v2 work it is
+   distributed under the GNU General Public License, version 2 as well.
+
+3. tools/kgo_commands.py, tools/kgo_assembler.py
+   From the SymphonicRain-ENX project (https://github.com/masagrator/SymphonicRain-ENX).
+   The upstream repository states no license; these two files are kept
+   unmodified, for reference only, with all rights remaining with their
+   author. If you are the copyright holder and want them removed, open an
+   issue and they will be taken out.
+
+Files not listed above (all other tools/, README.md, .gitignore) are the
+author's own work and are MIT-licensed as stated at the top of this file.
